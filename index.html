@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>個人自我介紹網站</title>
+
+  <!-- Cropper.js CSS (CDN) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+
+  <style>
+    :root{
+      --bg-color:#ffffff;
+      --text-color:#333333;
+      --primary-color:#4f46e5;
+      --nav-bg:rgba(255,255,255,0.8);
+      --transition-speed:0.3s;
+    }
+    [data-theme="dark"]{
+      --bg-color:#0f172a;
+      --text-color:#f8fafc;
+      --primary-color:#818cf8;
+      --nav-bg:rgba(15,23,42,0.8);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",Helvetica,Arial,sans-serif}
+    body{background:var(--bg-color);color:var(--text-color);line-height:1.6;transition:background var(--transition-speed),color var(--transition-speed)}
+
+    /* Navbar */
+    .navbar{position:fixed;top:0;left:0;right:0;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 10%;background:var(--nav-bg);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,0,0,0.05);z-index:1000}
+    [data-theme="dark"] .navbar{border-bottom-color:rgba(255,255,255,0.05)}
+    .logo{font-weight:700;color:var(--primary-color)}
+    .nav-links{display:flex;gap:1rem;align-items:center}
+    .nav-links a{color:var(--text-color);text-decoration:none;margin-left:1.5rem;font-weight:500}
+    .nav-links a:hover{color:var(--primary-color)}
+    .theme-btn{background:none;border:none;font-size:1.2rem;padding:6px;border-radius:50%;cursor:pointer}
+
+    /* Hero */
+    .hero-section{min-height:100vh;padding:110px 20px 40px 20px;display:flex;align-items:center;justify-content:center}
+    .hero-container{max-width:760px;width:100%;display:grid;gap:1rem;align-items:start;text-align:center}
+    .hero-title{font-size:2.5rem;font-weight:800;word-break:break-word}
+
+    .avatar-upload-wrapper{display:flex;flex-direction:column;align-items:center;gap:0.5rem}
+    .avatar-preview-box{width:150px;height:150px;border-radius:50%;overflow:hidden;border:4px solid var(--primary-color);background:#f1f5f9;display:grid;place-items:center}
+    .avatar-preview-img{width:100%;height:100%;object-fit:cover;display:block}
+    .avatar-upload-btn{padding:0.45rem 1rem;border-radius:20px;border:1px solid var(--primary-color);color:var(--primary-color);background:transparent;font-weight:600;cursor:pointer}
+    .avatar-upload-btn:hover{background:var(--primary-color);color:#fff}
+
+    .hero-input-box{background:var(--bg-color);padding:1rem;border-radius:12px;border:1px solid rgba(0,0,0,0.05);box-shadow:0 6px 22px rgba(0,0,0,0.04);text-align:left;max-width:420px;margin:0 auto}
+    [data-theme="dark"] .hero-input-box{border-color:rgba(255,255,255,0.05);box-shadow:0 6px 22px rgba(0,0,0,0.18)}
+    .hero-input-box label{display:block;font-weight:600;margin-bottom:0.5rem}
+    .hero-input-box input{width:100%;padding:0.65rem 0.9rem;border-radius:8px;border:1px solid #cbd5e1;background:var(--bg-color);color:var(--text-color)}
+    .hero-input-box input:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 3px rgba(79,70,229,0.08)}
+    .hero-input-box.invalid input{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,0.08)}
+    .hero-input-box .error-msg{color:#ef4444;display:none;margin-top:0.35rem;font-size:0.9rem}
+    .hero-input-box.invalid .error-msg{display:block}
+
+    /* Projects & manager */
+    .projects-section{padding:80px 10%;background:rgba(0,0,0,0.02)}
+    .section-title{text-align:center;font-size:1.9rem;margin-bottom:1.5rem;position:relative}
+    .section-title::after{content:'';position:absolute;left:50%;transform:translateX(-50%);bottom:-10px;width:50px;height:4px;background:var(--primary-color);border-radius:2px}
+    .project-manager-panel{max-width:700px;margin:0 auto 2rem auto;background:var(--bg-color);padding:1.25rem;border-radius:12px;border:1px solid rgba(0,0,0,0.05);box-shadow:0 6px 20px rgba(0,0,0,0.04)}
+    .project-manager-panel h3{text-align:center;margin-bottom:1rem}
+    .file-upload-wrapper{border:2px dashed #cbd5e1;border-radius:8px;padding:1rem;text-align:center;cursor:pointer;transition:all var(--transition-speed);margin-bottom:0.5rem}
+    [data-theme="dark"] .file-upload-wrapper{border-color:#334155}
+    .file-upload-wrapper:hover{border-color:var(--primary-color);background:rgba(79,70,229,0.03)}
+    .file-upload-wrapper.invalid{border-color:#ef4444;background:rgba(239,68,68,0.03)}
+    .file-info-text{font-size:0.9rem;color:#64748b}
+    .projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+    .project-card{background:var(--bg-color);border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.04);display:flex;flex-direction:column}
+    .card-img-box{height:160px;overflow:hidden;background:#f1f5f9;display:flex;align-items:center;justify-content:center}
+    [data-theme="dark"] .card-img-box{background:#1e293b}
+    .card-img{width:100%;height:100%;object-fit:cover;transition:transform var(--transition-speed)}
+    .project-card:hover .card-img{transform:scale(1.05)}
+    .file-icon-placeholder{font-size:3rem}
+    .card-content{padding:1rem;display:flex;flex-direction:column;gap:0.5rem}
+    .card-title{font-weight:700}
+    .card-text{color:#64748b;word-break:break-word}
+
+    /* Contact */
+    .contact-section{padding:80px 10%}
+    .contact-container{max-width:700px;margin:0 auto}
+    .contact-form{padding:1.25rem;border-radius:12px;background:var(--bg-color);border:1px solid rgba(0,0,0,0.03);box-shadow:0 8px 30px rgba(0,0,0,0.04)}
+    .form-group{margin-bottom:1rem}
+    .form-group label{display:block;margin-bottom:0.4rem;font-weight:600}
+    .form-group input,.form-group textarea{width:100%;padding:0.7rem 0.9rem;border-radius:8px;border:1px solid #cbd5e1;background:var(--bg-color);color:var(--text-color)}
+    .form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 3px rgba(79,70,229,0.08)}
+    .form-group.invalid input,.form-group.invalid textarea{border-color:#ef4444}
+    .form-group .error-msg{color:#ef4444;font-size:0.9rem;display:none;margin-top:0.3rem}
+    .form-group.invalid .error-msg{display:block}
+    .submit-btn{width:100%;padding:0.85rem;border-radius:8px;border:none;background:var(--primary-color);color:#fff;font-weight:700;cursor:pointer}
+    .submit-btn:hover{background:#4338ca;transform:translateY(-1px)}
+    .success-banner{display:none;margin-top:1rem;padding:0.9rem;border-radius:8px;background:#bbf7d0;color:#166534;text-align:center}
+
+    /* Crop modal */
+    .crop-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;z-index:2000;padding:1rem}
+    .modal-content{width:100%;max-width:520px;border-radius:12px;padding:1rem;background:var(--bg-color);color:var(--text-color)}
+    .crop-container{background:#000;display:flex;align-items:center;justify-content:center;max-height:360px;overflow:hidden;margin-bottom:1rem}
+    .modal-actions{display:flex;gap:0.75rem}
+    .modal-btn{flex:1;padding:0.7rem;border-radius:8px;border:none;font-weight:600;cursor:pointer}
+    .cancel-btn{background:#e6eef8;color:#475569}
+    .confirm-btn{background:var(--primary-color);color:#fff}
+
+    .footer{text-align:center;padding:2rem;border-top:1px solid rgba(0,0,0,0.05);color:#64748b}
+
+    @media(max-width:968px){
+      .projects-grid{grid-template-columns:1fr}
+      .navbar{padding:0 5%}
+      .hero-title{font-size:2rem}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar" role="navigation" aria-label="主選單">
+    <div class="logo">Portfolio</div>
+    <div class="nav-links">
+      <a href="#projects">作品</a>
+      <a href="#contact">聯絡</a>
+    </div>
+    <button id="theme-toggle" class="theme-btn" aria-label="切換深色模式">🌙</button>
+  </nav>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero-section" id="home" aria-label="首頁">
+      <div class="hero-container">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+          <div class="avatar-upload-wrapper" aria-hidden="false">
+            <div class="avatar-preview-box" aria-hidden="false">
+              <img id="avatar-preview" class="avatar-preview-img" alt="使用者大頭貼" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f1f5f9'/%3E%3Ccircle cx='12' cy='8' r='4' fill='%23c7d2fe'/%3E%3Cpath d='M4 20c0-3.3137 2.6863-6 6-6h4c3.3137 0 6 2.6863 6 6' fill='%23c7d2fe'/%3E%3C/svg%3E" />
+            </div>
+            <div style="display:flex;gap:0.5rem;">
+              <button id="avatar-upload-btn" class="avatar-upload-btn" type="button">上傳大頭貼</button>
+              <input id="avatar-input" type="file" accept="image/*" style="display:none" aria-hidden="true" />
+            </div>
+          </div>
+
+          <h1 class="hero-title" id="hero-title-text">哈囉，我叫名字</h1>
+
+          <div id="hero-input-group" class="hero-input-box" aria-label="編輯標題姓名">
+            <label for="name-custom-input">顯示名稱（必填）</label>
+            <input id="name-custom-input" type="text" placeholder="輸入你的名字" />
+            <div class="error-msg">請輸入顯示名稱</div>
+          </div>
+
+          <p style="color:#6b7280; max-width:720px; text-align:center;">歡迎來到我的個人網站。這裡展示我的作品與聯絡方式。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Project manager -->
+    <section id="projects" class="projects-section" aria-label="作品">
+      <h2 class="section-title">作品集</h2>
+
+      <div class="project-manager-panel" aria-label="新增作品面板">
+        <h3>新增作品</h3>
+
+        <div id="file-dropzone" class="file-upload-wrapper" tabindex="0" role="button" aria-label="點擊或拖曳檔案到此處上傳">
+          <input id="project-file-input" type="file" style="display:none" />
+          <div id="file-status-text" class="file-info-text">📂 點擊或拖曳上傳作品檔案（圖片 / PDF / ZIP 等）</div>
+          <div id="file-error-text" class="error-msg" style="display:none;margin-top:0.5rem">請選擇一個檔案</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr;gap:0.5rem;margin-top:0.5rem">
+          <div class="form-group" id="title-group">
+            <label for="project-title-input">作品標題（必填）</label>
+            <input id="project-title-input" type="text" placeholder="輸入作品標題" />
+            <div class="error-msg">請輸入作品標題</div>
+          </div>
+
+          <div class="form-group">
+            <label for="project-desc-input">作品簡短說明（選填）</label>
+            <textarea id="project-desc-input" rows="3" placeholder="輸入說明（選填）"></textarea>
+          </div>
+
+          <div style="display:flex;gap:0.5rem">
+            <button id="add-project-btn" class="submit-btn" type="button">發布新作品</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="dynamic-projects-container" class="projects-grid" style="margin-top:1rem">
+        <!-- 動態新增的作品卡片會放在這裡 -->
+      </div>
+    </section>
+
+    <!-- Crop Modal -->
+    <div id="crop-modal" class="crop-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal-content" role="document">
+        <h3>裁切並設定大頭貼</h3>
+        <div class="crop-container">
+          <img id="crop-image" alt="裁切預覽" style="max-width:100%; max-height:360px; display:block;" />
+        </div>
+        <div class="modal-actions">
+          <button id="cancel-crop-btn" class="modal-btn cancel-btn" type="button">取消</button>
+          <button id="confirm-crop-btn" class="modal-btn confirm-btn" type="button">確認裁切</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <section id="contact" class="contact-section" aria-label="聯絡">
+      <div class="contact-container">
+        <h2 class="section-title">聯絡我</h2>
+        <form id="contact-form" class="contact-form" novalidate>
+          <div class="form-group">
+            <label for="user-name">姓名</label>
+            <input id="user-name" type="text" placeholder="您的姓名" />
+            <div class="error-msg">請填寫姓名</div>
+          </div>
+
+          <div class="form-group">
+            <label for="user-email">電子郵件</label>
+            <input id="user-email" type="email" placeholder="name@example.com" />
+            <div class="error-msg">請填寫有效的 email</div>
+          </div>
+
+          <div class="form-group">
+            <label for="user-message">訊息</label>
+            <textarea id="user-message" rows="5" placeholder="輸入您的訊息"></textarea>
+            <div class="error-msg">請輸入訊息</div>
+          </div>
+
+          <button class="submit-btn" type="submit">送出</button>
+          <div id="success-banner" class="success-banner" role="status">已送出！我會盡快回覆你。</div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">© 2026 Portfolio. All rights reserved.</footer>
+
+  <!-- Cropper.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      /* ----------------- Theme toggle ----------------- */
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      const htmlEl = document.documentElement;
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      htmlEl.setAttribute('data-theme', savedTheme);
+      themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+      themeToggleBtn.addEventListener('click', () => {
+        const cur = htmlEl.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = cur === 'dark' ? 'light' : 'dark';
+        htmlEl.setAttribute('data-theme', next);
+        themeToggleBtn.textContent = next === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('theme', next);
+      });
+
+      /* ----------------- Name input sync & validation ----------------- */
+      const nameInput = document.getElementById('name-custom-input');
+      const heroTitleText = document.getElementById('hero-title-text');
+      const heroInputGroup = document.getElementById('hero-input-group');
+
+      function updateHeroTitle(value) {
+        if (!value) heroTitleText.textContent = '哈囉，我叫名字';
+        else heroTitleText.textContent = `哈囉，我叫${value}`;
+      }
+
+      nameInput.addEventListener('input', () => {
+        const v = nameInput.value.trim();
+        updateHeroTitle(v);
+        if (v === '') heroInputGroup.classList.add('invalid');
+        else heroInputGroup.classList.remove('invalid');
+      });
+
+      nameInput.addEventListener('blur', () => {
+        const v = nameInput.value.trim();
+        if (v === '') {
+          heroInputGroup.classList.add('invalid');
+          updateHeroTitle('');
+        } else {
+          heroInputGroup.classList.remove('invalid');
+          updateHeroTitle(v);
+        }
+      });
+
+      /* ----------------- Avatar cropper ----------------- */
+      const avatarInput = document.getElementById('avatar-input');
+      const avatarPreview = document.getElementById('avatar-preview');
+      const avatarUploadBtn = document.getElementById('avatar-upload-btn');
+      const cropModal = document.getElementById('crop-modal');
+      const cropImage = document.getElementById('crop-image');
+      const cancelCropBtn = document.getElementById('cancel-crop-btn');
+      const confirmCropBtn = document.getElementById('confirm-crop-btn');
+      let cropper = null;
+
+      avatarUploadBtn.addEventListener('click', () => avatarInput.click());
+
+      avatarInput.addEventListener('change', (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          cropImage.src = ev.target.result;
+          cropModal.style.display = 'flex';
+          cropModal.setAttribute('aria-hidden', 'false');
+          if (cropper) cropper.destroy();
+          cropper = new Cropper(cropImage, { aspectRatio: 1, viewMode: 1, autoCropArea: 0.9, background: false, responsive: true });
+        };
+        reader.readAsDataURL(f);
+      });
+
+      cancelCropBtn.addEventListener('click', () => {
+        if (cropper) { cropper.destroy(); cropper = null; }
+        cropModal.style.display = 'none';
+        cropModal.setAttribute('aria-hidden', 'true');
+        avatarInput.value = '';
+      });
+
+      confirmCropBtn.addEventListener('click', () => {
+        if (!cropper) return;
+        const canvas = cropper.getCroppedCanvas({ width: 300, height: 300, imageSmoothingQuality: 'high' });
+        avatarPreview.src = canvas.toDataURL('image/png');
+        cropper.destroy(); cropper = null;
+        cropModal.style.display = 'none';
+        cropModal.setAttribute('aria-hidden', 'true');
+        avatarInput.value = '';
+      });
+
+      cropModal.addEventListener('click', (ev) => { if (ev.target === cropModal) cancelCropBtn.click(); });
+      document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && cropModal.style.display === 'flex') cancelCropBtn.click(); });
+
+      /* ----------------- Project upload & dynamic cards ----------------- */
+      const fileDropzone = document.getElementById('file-dropzone');
+      const projectFileInput = document.getElementById('project-file-input');
+      const fileStatusText = document.getElementById('file-status-text');
+      const fileErrorText = document.getElementById('file-error-text');
+      const projectTitleInput = document.getElementById('project-title-input');
+      const projectDescInput = document.getElementById('project-desc-input');
+      const addProjectBtn = document.getElementById('add-project-btn');
+      const dynamicProjectsContainer = document.getElementById('dynamic-projects-container');
+
+      let uploadedFileUrl = null;
+      let uploadedFileType = '';
+      let uploadedFileName = '';
+
+      // click to open file selector
+      fileDropzone.addEventListener('click', () => projectFileInput.click());
+      fileDropzone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); projectFileInput.click(); } });
+
+      // drag & drop support
+      fileDropzone.addEventListener('dragover', (e) => { e.preventDefault(); fileDropzone.classList.add('dragover'); });
+      fileDropzone.addEventListener('dragleave', () => { fileDropzone.classList.remove('dragover'); });
+      fileDropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        fileDropzone.classList.remove('dragover');
+        const f = e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f) handleProjectFile(f);
+      });
+
+      projectFileInput.addEventListener('change', (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (f) handleProjectFile(f);
+      });
+
+      function handleProjectFile(file) {
+        // revoke previous URL if exists
+        if (uploadedFileUrl) URL.revokeObjectURL(uploadedFileUrl);
+        uploadedFileName = file.name || 'file';
+        uploadedFileType = file.type || '';
+        uploadedFileUrl = URL.createObjectURL(file);
+        fileDropzone.classList.remove('invalid');
+        fileErrorText.style.display = 'none';
+        fileStatusText.textContent = `✅ 已載入：${uploadedFileName}`;
+      }
+
+      addProjectBtn.addEventListener('click', () => {
+        const isFileExist = uploadedFileUrl !== null;
+        const isTitleValid = projectTitleInput.value.trim() !== '';
+
+        if (!isFileExist) {
+          fileDropzone.classList.add('invalid');
+          fileErrorText.style.display = 'block';
+        } else {
+          fileDropzone.classList.remove('invalid');
+          fileErrorText.style.display = 'none';
+        }
+
+        const titleGroup = document.getElementById('title-group');
+        if (!isTitleValid) titleGroup.classList.add('invalid'); else titleGroup.classList.remove('invalid');
+
+        if (!isFileExist || !isTitleValid) {
+          const firstErr = document.querySelector('.file-upload-wrapper.invalid, #title-group.invalid');
+          if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        // 建立卡片元素（避免直接 innerHTML 注入）
+        const card = document.createElement('article');
+        card.className = 'project-card';
+
+        const imgBox = document.createElement('div');
+        imgBox.className = 'card-img-box';
+
+        if (uploadedFileType.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.className = 'card-img';
+          img.src = uploadedFileUrl;
+          img.alt = projectTitleInput.value.trim();
+          imgBox.appendChild(img);
+        } else {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'file-icon-placeholder';
+          placeholder.textContent = '📄';
+          const nameSpan = document.createElement('div');
+          nameSpan.style.fontSize = '0.85rem';
+          nameSpan.style.color = '#64748b';
+          nameSpan.style.padding = '0 10px';
+          nameSpan.style.textAlign = 'center';
+          nameSpan.textContent = uploadedFileName;
+          imgBox.appendChild(placeholder);
+          imgBox.appendChild(nameSpan);
+        }
+
+        const content = document.createElement('div');
+        content.className = 'card-content';
+        const h3 = document.createElement('h3');
+        h3.className = 'card-title';
+        h3.textContent = projectTitleInput.value.trim();
+        const p = document.createElement('p');
+        p.className = 'card-text';
+        p.textContent = projectDescInput.value.trim() !== '' ? projectDescInput.value.trim() : '（無填寫說明）';
+
+        content.appendChild(h3);
+        content.appendChild(p);
+
+        card.appendChild(imgBox);
+        card.appendChild(content);
+
+        // 插到最前面
+        dynamicProjectsContainer.insertBefore(card, dynamicProjectsContainer.firstChild);
+
+        // 重設狀態並釋放 object URL（這裡先 revoke 以避免記憶體累積；如果你想保留預覽繼續顯示，請不要 revoke）
+        // 但因為卡片用的是 objectURL，我們不能 revoke，否則卡片會失去圖片；所以在這裡不 revoke，除非你上傳到 server 並改用伺服器 URL
+        projectTitleInput.value = '';
+        projectDescInput.value = '';
+        projectFileInput.value = '';
+        uploadedFileUrl = uploadedFileUrl; // 保留以供卡片顯示
+        uploadedFileType = '';
+        uploadedFileName = '';
+        fileStatusText.textContent = '📂 點擊或拖曳上傳作品檔案（圖片 / PDF / ZIP 等）';
+      });
+
+      /* ----------------- Contact form validation ----------------- */
+      const form = document.getElementById('contact-form');
+      const cfName = document.getElementById('user-name');
+      const cfEmail = document.getElementById('user-email');
+      const cfMsg = document.getElementById('user-message');
+      const successBanner = document.getElementById('success-banner');
+
+      const validateField = (el, cond) => {
+        const grp = el.parentElement;
+        if (cond) { grp.classList.remove('invalid'); return true; }
+        grp.classList.add('invalid'); return false;
+      };
+
+      const isValidEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      };
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const validName = validateField(cfName, cfName.value.trim() !== '');
+        const validEmail = validateField(cfEmail, isValidEmail(cfEmail.value.trim()));
+        const validMsg = validateField(cfMsg, cfMsg.value.trim() !== '');
+
+        // 同時檢查 hero 顯示名稱是否有值（依需求可改為非必填）
+        const displayNameOk = nameInput.value.trim() !== '';
+        if (!displayNameOk) heroInputGroup.classList.add('invalid');
+
+        if (validName && validEmail && validMsg && displayNameOk) {
+          successBanner.style.display = 'block';
+          form.reset();
+          setTimeout(() => { successBanner.style.display = 'none'; }, 3000);
+        } else {
+          const firstErr = document.querySelector('.form-group.invalid, .hero-input-box.invalid');
+          if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+
+      [cfName, cfEmail, cfMsg].forEach(inp => inp.addEventListener('input', () => inp.parentElement.classList.remove('invalid')));
+    });
+  </script>
+</body>
+</html>
