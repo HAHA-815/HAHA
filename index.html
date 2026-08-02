@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人自我介紹網站</title>
+    <!-- 引入 Cropper.js 樣式 (用於圖片裁剪選取範圍) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    
+    <!-- ==========================================
+       內嵌網頁樣式 (style.css 內容)
+       ========================================== -->
+    <style>
+        /* 1. 全域變數與重設 */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --primary-color: #4f46e5;
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            --transition-speed: 0.3s;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --primary-color: #818cf8;
+            --nav-bg: rgba(15, 23, 42, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            line-height: 1.6;
+        }
+
+        /* 2. 導覽列樣式 (Navbar) */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10%;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] .navbar {
+            border-bottom-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .theme-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: transform var(--transition-speed);
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* 3. 首頁樣式 (Hero Section) */
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            padding-top: 70px;
+        }
+
+        .hero-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        [data-theme="dark"] .hero-subtitle {
+            color: #94a3b8;
+        }
+
+        /* 4. 作品區樣式 (Projects Section) */
+        .projects-section {
+            padding: 100px 10%;
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        [data-theme="dark"] .projects-section {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .project-card {
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-img-box {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            background-color: #e2e8f0;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-speed) ease;
+        }
+
+        .project-card:hover .card-img {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+
+        [data-theme="dark"] .card-text {
+            color: #94a3b8;
+        }
+
+        /* 5. 聯絡區與大頭貼上傳樣式 */
+        .contact-section {
+            padding: 100px 10%;
+        }
+
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-form {
+            background-color: var(--bg-color);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        [data-theme="dark"] .contact-form {
+            border-color: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar-upload-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .avatar-preview-box {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%; 
+            overflow: hidden;   
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #f1f5f9;
+            margin-bottom: 1rem;
+        }
+
+        .avatar-preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .avatar-upload-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        #avatar-input {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+            font-family: inherit;
+        }
+
+        [data-theme="dark"] .form-group input,
+        [data-theme="dark"] .form-group textarea {
+            border-color: #334155;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        .form-group.invalid input,
+        .form-group.invalid textarea {
+            border-color: #ef4444;
+        }
+
+        .form-group.invalid input:focus,
+        .form-group.invalid textarea:focus {
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        .error-msg {
+            display: none;
+            color: #ef4444;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-group.invalid .error-msg {
+            display: block;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.85rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+        }
+
+        .submit-btn:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        .success-banner {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #bbf7d0;
+            color: #166534;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .success-banner {
+            background-color: #14532d;
+            color: #bbf7d0;
+        }
+
+        /* 6. 圖片裁剪彈出式視窗 (Crop Modal) */
+        .crop-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 1rem;
+        }
+
+        .crop-container {
+            max-height: 300px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .cropper-view-box,
+        .cropper-face {
+            border-radius: 50%;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all var(--transition-speed);
+        }
+
+        .cancel-btn {
+            background-color: #e2e8f0;
+            color: #475569;
+        }
+
+        .cancel-btn:hover {
+            background-color: #cbd5e1;
+        }
+
+        .confirm-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            background-color: #4338ca;
+        }
+
+        /* 7. 頁尾與 RWD 響應式 */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.9rem;
+            color: #64748b;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] .footer {
+            border-top-color: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 968px) {
+            .navbar {
+                padding: 0 5%;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .hero-title {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+
+            .contact-form {
+                padding: 1.5rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 導覽列 -->
+    <nav class="navbar">
+        <div class="logo">Portfolio</div>
+        <div class="nav-links">
+            <a href="#home">首頁</a>
+            <a href="#projects">作品</a>
+            <a href="#contact">聯絡</a>
+            <button class="theme-btn" id="theme-toggle">🌙</button>
+        </div>
+    </nav>
+
+    <!-- 首頁區塊 -->
+    <section class="hero-section" id="home">
+        <div class="hero-container">
+            <h1 class="hero-title">歡迎來到我的作品集</h1>
+            <p class="hero-subtitle">展示我的設計與開發能力</p>
+        </div>
+    </section>
+
+    <!-- 作品區塊 -->
+    <section class="projects-section" id="projects">
+        <h2 class="section-title">我的作品</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="card-img-box">
+                    <img src="https://via.placeholder.com/300x200?text=Project+1" alt="Project 1" class="card-img">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">專案一</h3>
+                    <p class="card-text">這是一個創新的網頁設計專案，展示了現代化的UI/UX設計理念。</p>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-img-box">
+                    <img src="https://via.placeholder.com/300x200?text=Project+2" alt="Project 2" class="card-img">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">專案二</h3>
+                    <p class="card-text">一個全棧應用程式，包括前端和後端的完整解決方案。</p>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-img-box">
+                    <img src="https://via.placeholder.com/300x200?text=Project+3" alt="Project 3" class="card-img">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">專案三</h3>
+                    <p class="card-text">手機應用程式開發，優化了用戶體驗和性能。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 聯絡表單區塊 -->
+    <section class="contact-section" id="contact">
+        <div class="contact-container">
+            <h2 class="section-title">聯絡我</h2>
+            <form class="contact-form" id="contact-form">
+                <!-- 大頭貼上傳 -->
+                <div class="avatar-upload-wrapper">
+                    <div class="avatar-preview-box">
+                        <img id="avatar-preview" class="avatar-preview-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=default" alt="Avatar">
+                    </div>
+                    <input type="file" id="avatar-input" accept="image/*">
+                    <button type="button" class="avatar-upload-btn" id="avatar-btn">上傳大頭貼</button>
+                </div>
+
+                <!-- 表單欄位 -->
+                <div class="form-group">
+                    <label for="user-name">名字 *</label>
+                    <input type="text" id="user-name" placeholder="請輸入您的名字" required>
+                    <span class="error-msg">名字不能為空</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="user-email">電子郵件 *</label>
+                    <input type="email" id="user-email" placeholder="請輸入您的電子郵件" required>
+                    <span class="error-msg">請輸入有效的電子郵件</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="user-message">訊息 *</label>
+                    <textarea id="user-message" placeholder="請輸入您的訊息" rows="5" required></textarea>
+                    <span class="error-msg">訊息不能為空</span>
+                </div>
+
+                <button type="submit" class="submit-btn">送出</button>
+                <div class="success-banner" id="success-banner">✓ 感謝您的訊息！我們會盡快回覆。</div>
+            </form>
+        </div>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="footer">
+        <p>© 2026 Portfolio. All rights reserved.</p>
+    </footer>
+
+    <!-- 圖片裁剪彈出式視窗 -->
+    <div class="crop-modal" id="crop-modal">
+        <div class="modal-content">
+            <h3>調整大頭貼範圍 (圓形裁剪)</h3>
+            <div class="crop-container">
+                <img id="crop-image" src="" alt="Crop Image" style="max-width: 100%;">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn cancel-btn" id="cancel-crop-btn">取消</button>
+                <button type="button" class="modal-btn confirm-btn" id="confirm-crop-btn">確認</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 Cropper.js 庫 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <!-- 主要 JavaScript 邏輯 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 1. 深色模式切換功能 ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const htmlElement = document.documentElement;
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            htmlElement.setAttribute('data-theme', savedTheme);
+            themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                let newTheme = 'light';
+                if (currentTheme === 'light') {
+                    newTheme = 'dark';
+                    themeToggleBtn.textContent = '☀️';
+                } else {
+                    newTheme = 'light';
+                    themeToggleBtn.textContent = '🌙';
+                }
+                htmlElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+
+            // --- 2. 大頭貼上傳與範圍選取裁剪邏輯 ---
+            const avatarBtn = document.getElementById('avatar-btn');
+            const avatarInput = document.getElementById('avatar-input');
+            const avatarPreview = document.getElementById('avatar-preview');
+            const cropModal = document.getElementById('crop-modal');
+            const cropImage = document.getElementById('crop-image');
+            const cancelCropBtn = document.getElementById('cancel-crop-btn');
+            const confirmCropBtn = document.getElementById('confirm-crop-btn');
+            let cropper = null;
+
+            avatarBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                avatarInput.click();
+            });
+
+            avatarInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (files && files.length > 0) {
+                    const file = files[0];
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        cropImage.src = event.target.result;
+                        cropModal.style.display = 'flex';
+                        if (cropper) cropper.destroy();
+                        cropper = new Cropper(cropImage, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            background: false,
+                            autoCropArea: 0.8,
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            cancelCropBtn.addEventListener('click', () => {
+                cropModal.style.display = 'none';
+                avatarInput.value = '';
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+            });
+
+            confirmCropBtn.addEventListener('click', () => {
+                if (!cropper) return;
+                const canvas = cropper.getCroppedCanvas({
+                    width: 300,
+                    height: 300,
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high',
+                });
+                avatarPreview.src = canvas.toDataURL();
+                cropModal.style.display = 'none';
+                cropper.destroy();
+                cropper = null;
+            });
+
+            // --- 3. 聯絡表單驗證邏輯 ---
+            const form = document.getElementById('contact-form');
+            const nameInput = document.getElementById('user-name');
+            const emailInput = document.getElementById('user-email');
+            const messageInput = document.getElementById('user-message');
+            const successBanner = document.getElementById('success-banner');
+
+            const validateField = (input, condition) => {
+                const formGroup = input.parentElement;
+                if (condition) {
+                    formGroup.classList.remove('invalid');
+                    return true;
+                } else {
+                    formGroup.classList.add('invalid');
+                    return false;
+                }
+            };
+
+            const isValidEmail = (email) => {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            };
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const isNameValid = validateField(nameInput, nameInput.value.trim() !== '');
+                const isEmailValid = validateField(emailInput, isValidEmail(emailInput.value.trim()));
+                const isMessageValid = validateField(messageInput, messageInput.value.trim() !== '');
+
+                if (isNameValid && isEmailValid && isMessageValid) {
+                    successBanner.style.display = 'block';
+                    form.reset();
+                    avatarPreview.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=default';
+                    setTimeout(() => {
+                        successBanner.style.display = 'none';
+                    }, 3000);
+                }
+            });
+
+            const inputs = [nameInput, emailInput, messageInput];
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    input.parentElement.classList.remove('invalid');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
